@@ -1,6 +1,6 @@
 # Background jobs
 
-[![](https://jitpack.io/v/bishoybasily-fidelyo/messenger.svg)](https://jitpack.io/#bishoybasily-fidelyo/messenger)
+[![](https://jitpack.io/v/bishoybasily-fidelyo/worker.svg)](https://jitpack.io/#bishoybasily-fidelyo/worker)
 
 ## Overview
 
