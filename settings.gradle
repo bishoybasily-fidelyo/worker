@@ -1,1 +1,1 @@
-include ':app', ':worker-annotations', ':worker-processor'
+include ':sample', ':lib-annotations', ':lib-processor'
