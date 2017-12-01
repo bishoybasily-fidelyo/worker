@@ -80,13 +80,13 @@ public class Uploader extends WorkerUploader {
 5- execute your job
 
 ``` java
-        Intent intent = new Intent();
-        intent.putExtra("A", 1);
-        intent.putExtra("B", 2);
-        
-        Uploader.executeUploadAudioJob(this, intent);
+Intent intent = new Intent();
+intent.putExtra("A", 1);
+intent.putExtra("B", 2);
 
-        Uploader.executeUploadImageJob(this, intent);
-        
-        Uploader.executeUploadVideoJob(this, intent);
+Uploader.executeUploadAudioJob(this, intent);
+
+Uploader.executeUploadImageJob(this, intent);
+
+Uploader.executeUploadVideoJob(this, intent);
 ```
