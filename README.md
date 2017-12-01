@@ -4,9 +4,18 @@
 
 # Installation
 
+gradle - kotlin
+
 ``` gradle
 implementation 'com.github.bishoybasily-fidelyo.worker:annotations:1.0.2'
 kapt 'com.github.bishoybasily-fidelyo.worker:processor:1.0.2'
+```
+
+gradle - java
+
+``` gradle
+implementation 'com.github.bishoybasily-fidelyo.worker:annotations:1.0.2'
+annotationProcessor 'com.github.bishoybasily-fidelyo.worker:processor:1.0.2'
 ```
 
 ## Overview
