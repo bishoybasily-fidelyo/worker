@@ -7,7 +7,7 @@ version = '1.0.1'
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile group: 'com.squareup', name: 'javapoet', version: '1.9.0'
-    compile project(':lib-annotations')
+    compile project(':annotations')
 }
 
 uploadArchives {
