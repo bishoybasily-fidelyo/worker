@@ -6,7 +6,7 @@
 
 Easy background tasks.
 
-## Eample android kotlin
+## Example android kotlin
 
 **Full example**
 
