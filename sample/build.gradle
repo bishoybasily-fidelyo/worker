@@ -39,8 +39,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    implementation 'com.github.bishoybasily-fidelyo.worker:lib-annotations:1.0.1'
-    kapt 'com.github.bishoybasily-fidelyo.worker:lib-processor:1.0.1'
+    implementation 'com.github.bishoybasily-fidelyo.worker:annotations:1.0.2'
+    kapt 'com.github.bishoybasily-fidelyo.worker:processor:1.0.2'
 
     implementation 'com.android.support:design:27.0.1'
     implementation 'com.android.support:appcompat-v7:27.0.1'

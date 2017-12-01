@@ -2,6 +2,13 @@
 
 [![](https://jitpack.io/v/bishoybasily-fidelyo/worker.svg)](https://jitpack.io/#bishoybasily-fidelyo/worker)
 
+# Installation
+
+``` gradle
+implementation 'com.github.bishoybasily-fidelyo.worker:annotations:1.0.2'
+kapt 'com.github.bishoybasily-fidelyo.worker:processor:1.0.2'
+```
+
 ## Overview
 
 Easy background tasks.
