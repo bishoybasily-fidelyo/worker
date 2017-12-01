@@ -15,7 +15,12 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.putExtra("A", 1);
         intent.putExtra("B", 2);
-        Visits.executeWorkOneJob(this, intent);
+
+        Uploader.executeUploadAudioJob(this, intent);
+
+        Uploader.executeUploadImageJob(this, intent);
+
+        Uploader.executeUploadVideoJob(this, intent);
 
     }
 }

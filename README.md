@@ -1,49 +1,92 @@
-# Local messaging for android
+# Background jobs
 
 [![](https://jitpack.io/v/bishoybasily-fidelyo/messenger.svg)](https://jitpack.io/#bishoybasily-fidelyo/messenger)
 
 ## Overview
 
-This library is about basic implementation for the rabbit-mq topic exchange,
-the exchange you can filter it's messages by routing key.
+Easy background tasks.
 
 ## Eample android kotlin
 
 **Full example**
-``` kotlin
-import com.fidelyo.messenger.Exchange
-import com.fidelyo.messenger.Subscriber
 
- //...
+1- create the worker
 
-    val exchange = Exchange()
-    
- //...
- 
-        val subscriber1 = Subscriber<String>("routing_key2", Handler(Looper.myLooper()))
-        subscriber1.callback = object : Subscriber.Callback<String> {
+``` java
+import android.content.Intent;
 
-            override fun onMessage(message: String) {
-                Log.i(TAG, message + " 1")
-            }
+import com.fidelyo.worker.annotations.Job;
+import com.fidelyo.worker.annotations.Worker;
 
-        }
-        exchange.register(subscriber1)
+@Worker
+public class Uploader {
 
-        val subscriber2 = Subscriber<String>("routing_key2", Handler(Looper.myLooper()))
-        subscriber2.callback = object : Subscriber.Callback<String> {
+    @Job
+    public void uploadImage(Intent intent) {
+        // image uploading logic goes here
+    }
 
-            override fun onMessage(message: String) {
-                Log.i(TAG, message + " 2")
-            }
+    @Job
+    public void uploadVideo(Intent intent) {
+        // video uploading logic goes here
+    }
 
-        }
-        exchange.register(subscriber2)
+    @Job
+    public void uploadAudio(Intent intent) {
+        // audio uploading logic goes here
+    }
 
-        exchange.publish("Hello", "routing_key2")
-        
- // ...
- 
+}
 ```
 
-Moreover, you can extend the exchange and override "shouldIPublish" method to write your own routing decision
+2- define your worker as a service in the manifest
+
+``` xml
+<service
+            android:name="com.fidelyo.sample.Uploader"
+            android:exported="false" />
+```
+            
+4- build the project and then extend the generated class
+
+``` java
+import android.content.Intent;
+
+import com.app.generated.WorkerUploader;
+import com.fidelyo.worker.annotations.Job;
+import com.fidelyo.worker.annotations.Worker;
+
+@Worker
+public class Uploader extends WorkerUploader {
+
+    @Job
+    public void uploadImage(Intent intent) {
+        // image uploading logic goes here
+    }
+
+    @Job
+    public void uploadVideo(Intent intent) {
+        // video uploading logic goes here
+    }
+
+    @Job
+    public void uploadAudio(Intent intent) {
+        // audio uploading logic goes here
+    }
+
+}
+```
+
+5- execute your job
+
+``` java
+        Intent intent = new Intent();
+        intent.putExtra("A", 1);
+        intent.putExtra("B", 2);
+        
+        Uploader.executeUploadAudioJob(this, intent);
+
+        Uploader.executeUploadImageJob(this, intent);
+        
+        Uploader.executeUploadVideoJob(this, intent);
+```

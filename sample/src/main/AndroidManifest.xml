@@ -21,7 +21,7 @@
 
 
         <service
-            android:name="com.fidelyo.sample.Replies"
+            android:name="com.fidelyo.sample.Uploader"
             android:exported="false" />
         <service
             android:name="com.fidelyo.sample.Visits"
