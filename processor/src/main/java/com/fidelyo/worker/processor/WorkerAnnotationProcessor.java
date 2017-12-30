@@ -2,6 +2,7 @@ package com.fidelyo.worker.processor;
 
 import com.fidelyo.worker.annotations.Job;
 import com.fidelyo.worker.annotations.Worker;
+import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
@@ -16,10 +17,9 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -27,8 +27,8 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 
-@SupportedAnnotationTypes("com.fidelyo.worker.annotations.Worker")
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@AutoService(Processor.class)
+@SupportedAnnotationTypes("com.fidelyo.worker.annotations.EnableWorker")
 public class WorkerAnnotationProcessor extends AbstractProcessor {
 
     private final String generatedPackageName = "com.app.generated";
@@ -39,8 +39,8 @@ public class WorkerAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
-        this.messager = processingEnvironment.getMessager();
         this.filer = processingEnvironment.getFiler();
+        this.messager = processingEnvironment.getMessager();
         this.elements = processingEnvironment.getElementUtils();
     }
 
@@ -55,7 +55,7 @@ public class WorkerAnnotationProcessor extends AbstractProcessor {
             if (element.getKind() == ElementKind.CLASS) {
                 TypeElement typeElement = (TypeElement) element;
 
-                String elementClassName = "Worker" + typeElement.getSimpleName();
+                String elementClassName = "Worker" + elementName(typeElement);
                 TypeSpec.Builder elementHandlerClass = TypeSpec.classBuilder(elementClassName)
                         .addModifiers(Modifier.PUBLIC)
                         .superclass(_intentServiceClass);
@@ -71,19 +71,19 @@ public class WorkerAnnotationProcessor extends AbstractProcessor {
                     if (e.getKind() == ElementKind.METHOD && e.getAnnotation(Job.class) != null) {
                         ExecutableElement executableElement = (ExecutableElement) e;
 
-                        MethodSpec.Builder elementTemplateFunction = MethodSpec.methodBuilder(methodName(executableElement))
+                        MethodSpec.Builder elementTemplateFunction = MethodSpec.methodBuilder(elementName(executableElement))
                                 .addModifiers(Modifier.PUBLIC)
                                 .addParameter(_intentClass, "intent");
                         elementHandlerClass.addMethod(elementTemplateFunction.build());
 
-                        MethodSpec.Builder elementExecuterFunction = MethodSpec.methodBuilder("execute" + capitalizeFirstLetter(methodName(executableElement)) + "Job")
+                        MethodSpec.Builder elementExecuterFunction = MethodSpec.methodBuilder("execute" + capitalizeFirstLetter(elementName(executableElement)) + "Job")
                                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                                 .addParameter(_contextClass, "context")
                                 .addParameter(_intentClass, "intent")
-                                .addStatement("context.startService(intent.setClass(context, " + packageReference(typeElement) + "." + className(typeElement) + ".class).setAction(\"" + methodName(executableElement) + "\"))");
+                                .addStatement("context.startService(intent.setClass(context, " + packageReference(typeElement) + "." + elementName(typeElement) + ".class).setAction(\"" + elementName(executableElement) + "\"))");
                         elementHandlerClass.addMethod(elementExecuterFunction.build());
 
-                        actions.add(methodName(executableElement));
+                        actions.add(elementName(executableElement));
 
                     }
                 }
@@ -110,15 +110,12 @@ public class WorkerAnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
-    private String methodName(ExecutableElement executableElement) {
-        return executableElement.getSimpleName().toString();
+
+    private String elementName(Element element) {
+        return element.getSimpleName().toString();
     }
 
-    private String className(TypeElement typeElement) {
-        return typeElement.getSimpleName().toString();
-    }
-
-    private String packageReference(TypeElement typeElement) {
+    private String packageReference(Element typeElement) {
         return elements.getPackageOf(typeElement).getQualifiedName().toString();
     }
 
@@ -128,9 +125,7 @@ public class WorkerAnnotationProcessor extends AbstractProcessor {
 
     private void writeClass(TypeSpec baseHandlerClass) {
         try {
-            JavaFile.builder(generatedPackageName, baseHandlerClass)
-                    .build()
-                    .writeTo(filer);
+            JavaFile.builder(generatedPackageName, baseHandlerClass).build().writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();
         }
